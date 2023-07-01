@@ -40,6 +40,11 @@ def load_config() -> Optional[dict]:
         default="replays",
         help="Specify folder where replays get stored"
     )
+    parser.add_argument(
+        '--server',
+        default='ppy.sh',
+        help='Specify a private server to use'
+    )
 
     args = parser.parse_args()
     dict = args.__dict__
@@ -50,6 +55,7 @@ def load_config() -> Optional[dict]:
         "password": dict["<password>"],
         "tourney": dict["tourney"],
         "folder": os.path.abspath(dict["out"]),
+        "server": dict["server"]
     }
 
 
@@ -60,6 +66,7 @@ def main():
     session.game = Game(
         session.config["username"],
         session.config["password"],
+        server=session.config["server"],
         tournament=session.config["tourney"],
     )
 
