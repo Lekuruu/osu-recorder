@@ -17,18 +17,30 @@ def load_config() -> Optional[dict]:
         prog="osu!recorder", description="Spectate and record replay files."
     )
 
-    parser.add_argument("<id>", help="Id of the player you want to spectate")
-    parser.add_argument("<username>", help="Your bancho username")
-    parser.add_argument("<password>", help="Your bancho password")
+    parser.add_argument(
+        "<id>",
+        help="Id of the player you want to spectate"
+    )
+    parser.add_argument(
+        "<username>",
+        help="Your bancho username"
+    )
+    parser.add_argument(
+        "<password>",
+        help="Your bancho password"
+    )
     parser.add_argument(
         "--tourney",
         help="Allow multiple clients to connect at once.",
         default=False,
-        action="store_true",
+        action="store_true"
     )
     parser.add_argument(
-        "--out", help="Specify folder where replays get stored", default="replays"
+        "--out",
+        default="replays",
+        help="Specify folder where replays get stored"
     )
+
     args = parser.parse_args()
     dict = args.__dict__
 
