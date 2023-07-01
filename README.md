@@ -19,11 +19,11 @@ pip install osu
 python main.py <id> <username> <password>
 ```
 
-`id`: Id of the player you want to spectate
-`username`: Your bancho username
-`password`: Your bancho password
+- `id`: Id of the player you want to spectate
+- `username`: Your bancho username
+- `password`: Your bancho password
 
 Optional arguments:
-`--tourney`: Allow for multiple clients at once (supporter only)
-`--out <path>`: Specify the folder where replays get stored (replays)
-`--server <url>`: Specify a custom server to use (ppy.sh)
+- `--tourney`: Allow for multiple clients at once (supporter only)
+- `--out <path>`: Specify the folder where replays get stored (replays)
+- `--server <url>`: Specify a custom server to use (ppy.sh)
