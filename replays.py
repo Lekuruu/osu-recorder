@@ -51,7 +51,7 @@ class Replay:
                         str(frame.time - previous_frame.time),
                         str(frame.x),
                         str(frame.y),
-                        str(sum([button.value for button in frame.button_state])),
+                        str(frame.button_state.value),
                     ]
                 )
             )
@@ -97,7 +97,7 @@ class Replay:
         header.s32(frame.total_score)
         header.u16(frame.max_combo)
         header.bool(frame.perfect)
-        header.s32(Mods.pack(mods))
+        header.s32(mods.value)
         header.string(score.hp_graph)
         header.s64(self.ticks)
 
