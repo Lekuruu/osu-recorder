@@ -75,13 +75,6 @@ class Replay:
 
         frame = score.frames[-1]
 
-        # Remove goofy mods
-        mods = score.status.mods
-        if Mods.FreeModAllowed in mods:
-            mods.remove(Mods.FreeModAllowed)
-        if Mods.ScoreIncreaseMods in mods:
-            mods.remove(Mods.ScoreIncreaseMods)
-
         header = StreamOut()
         header.u8(self.player.status.mode.value)
         header.s32(round(self.game.version_number))
@@ -97,7 +90,7 @@ class Replay:
         header.s32(frame.total_score)
         header.u16(frame.max_combo)
         header.bool(frame.perfect)
-        header.s32(mods.value)
+        header.s32(score.status.mods.value)
         header.string(score.hp_graph)
         header.s64(self.ticks)
 
