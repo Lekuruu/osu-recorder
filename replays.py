@@ -75,7 +75,7 @@ class Replay:
         stream.write(compressed)
         return stream.get()
 
-    def replay(self, score: Score) -> bytes:
+    def get_replay(self, score: Score) -> bytes:
         replay = StreamOut()
 
         frame = score.frames[-1]
@@ -138,7 +138,7 @@ class Replay:
 
         score = Score(self.score_frames, self.player, status, self.passed)
 
-        replay_file = self.replay(score)
+        replay_file = self.get_replay(score)
 
         import utils
 
