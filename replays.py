@@ -1,5 +1,5 @@
 from typing import Optional, Tuple, List
-from datetime import datetime
+from datetime import datetime, timezone
 from copy import copy
 
 from osu.objects import ReplayFrame, ScoreFrame
@@ -13,9 +13,9 @@ from objects import Score
 import threading
 import logging
 import lzma
+import time
 
 MIN_REPLAY_SIZE = 120
-
 
 class Replay:
     def __init__(self, manager) -> None:
@@ -37,7 +37,10 @@ class Replay:
 
     @property
     def ticks(self) -> int:
-        return int((datetime.now() - datetime(1, 1, 1)).total_seconds() * 10000000)
+        return int(
+            (datetime.now(timezone.utc) - datetime(1, 1, 1, tzinfo=timezone.utc))
+              .total_seconds() * 10_000_000
+        )
 
     @property
     def replay_string(self) -> str:
