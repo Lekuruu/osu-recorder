@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from copy import copy
 
 from osu.objects import ReplayFrame, ScoreFrame
-from osu.bancho.constants import ReplayAction, Mods
+from osu.bancho.constants import ReplayAction
 from osu.bancho.streams import StreamOut
 from osu.objects import Player
 from osu import Game
@@ -13,9 +13,9 @@ from objects import Score
 import threading
 import logging
 import lzma
-import time
 
 MIN_REPLAY_SIZE = 120
+
 
 class Replay:
     def __init__(self, manager) -> None:
@@ -38,8 +38,10 @@ class Replay:
     @property
     def ticks(self) -> int:
         return int(
-            (datetime.now(timezone.utc) - datetime(1, 1, 1, tzinfo=timezone.utc))
-              .total_seconds() * 10_000_000
+            (
+                datetime.now(timezone.utc) - datetime(1, 1, 1, tzinfo=timezone.utc)
+            ).total_seconds()
+            * 10_000_000
         )
 
     @property
