@@ -142,9 +142,10 @@ class Replay:
 
         import utils
 
-        threading.Thread(
-            target=utils.upload_score, args=(score, replay_file), daemon=True
-        ).start()
+        self.game.tasks.executor.submit(
+            utils.upload_score,
+            score, replay_file
+        )
 
         self.reset()
 
