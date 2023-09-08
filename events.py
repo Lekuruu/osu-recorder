@@ -4,7 +4,7 @@ from osu.objects import Player
 import session
 
 
-@session.game.events.register(ServerPackets.USER_PRESENCE)
+@session.game.events.register(ServerPackets.USER_PRESENCE, threaded=True)
 def user_presence(player: Player):
     if session.game.bancho.spectating:
         return
@@ -19,7 +19,7 @@ def user_presence(player: Player):
     session.logger.info(f"{player.name} is {player.status}")
 
 
-@session.game.events.register(ServerPackets.USER_LOGOUT)
+@session.game.events.register(ServerPackets.USER_LOGOUT, threaded=True)
 def logout(player: Player):
     if player.id == session.config["id"]:
         session.logger.warning(f"{player} is offline.")
@@ -27,6 +27,15 @@ def logout(player: Player):
         exit(0)
 
 
-@session.game.events.register(ServerPackets.SPECTATE_FRAMES)
+@session.game.events.register(ServerPackets.SPECTATE_FRAMES, threaded=True)
 def frames(action, frames, score_frame, extra):
     session.manager.handle_frames(frames, action, extra, score_frame)
+
+
+@session.game.events.register(ServerPackets.USER_ID, threaded=True)
+def request_user(response: int):
+    if response <= 0:
+        return
+
+    # Request target user presence when logged in
+    session.game.bancho.request_presence([session.config["id"]])
