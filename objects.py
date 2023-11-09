@@ -26,7 +26,7 @@ class Score:
     def checksum(self) -> str:
         frame = self.frames[-1]
         return hashlib.md5(
-            f"{frame.max_combo}osu{self.player.name}{self.status.checksum}{frame.total_score}{self.rank}".encode()
+            f"{frame.max_combo}osu{self.player.name}{self.status.checksum}{frame.total_score}{self.grade}".encode()
         ).hexdigest()
 
     @property
@@ -41,7 +41,7 @@ class Score:
         )
 
     @property
-    def rank(self) -> str:
+    def grade(self) -> str:
         num = self.data.c300 / self.data.total_hits
         num2 = self.data.c50 / self.data.total_hits
 
