@@ -68,6 +68,7 @@ def main():
         session.config["password"],
         server=session.config["server"],
         tournament=session.config["tourney"],
+        disable_chat_logging=True
     )
 
     session.manager = ReplayManager(session.game)
