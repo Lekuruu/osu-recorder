@@ -10,11 +10,15 @@ You can find an example replay [here](https://github.com/Lekuruu/osu-recorder/bl
 
 ## Usage
 
+Please make sure that you have python and pip installed!
+
 Install the `osu` package with pip:
 
 ```shell
 pip install osu
 ```
+
+Then execute the program like this:
 
 ```shell
 python main.py <id> <username> <password>
