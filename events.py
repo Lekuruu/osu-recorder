@@ -1,5 +1,6 @@
-from osu.bancho.constants import ServerPackets
+from osu.bancho.constants import ServerPackets, StatusAction
 from osu.objects import Player
+from copy import copy
 
 import session
 
@@ -17,6 +18,9 @@ def user_presence(player: Player):
     session.game.bancho.start_spectating(player)
 
     session.logger.info(f"{player.name} is {player.status}")
+
+    if player.status.action in (StatusAction.Playing, StatusAction.Multiplaying):
+        session.manager.current_status = copy(player.status)
 
 
 @session.game.events.register(ServerPackets.USER_LOGOUT, threaded=True)

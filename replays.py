@@ -5,7 +5,7 @@ from copy import copy
 from osu.objects import ReplayFrame, ScoreFrame
 from osu.bancho.constants import ReplayAction
 from osu.bancho.streams import StreamOut
-from osu.objects import Player
+from osu.objects import Player, Status
 from osu import Game
 
 from objects import Score
@@ -122,10 +122,11 @@ class Replay:
             self.reset()
             return
 
-        if self.player.status.checksum:
-            status = copy(self.player.status)
-        else:
-            status = copy(self.player.last_status)
+        if self.score_frames[-1].total_hits <= 0:
+            self.logger.warning("Replay save failed: Total hits <= 0")
+            return
+
+        status: Status = self.manager.current_status
 
         if not status.checksum:
             self.logger.warning("Replay save failed: Missing status")
@@ -161,6 +162,7 @@ class ReplayManager:
         self.last_action = ReplayAction.SongSelect
         self.game: Game = game
 
+        self.current_status = Status()
         self.replay = Replay(self)
         self.logger = logging.getLogger("replay-manager")
 
@@ -194,6 +196,10 @@ class ReplayManager:
             self.logger.info(
                 f"{self.spectating} selected new song: {self.spectating.status.text} (https://osu.ppy.sh/b/{self.spectating.status.beatmap_id})."
             )
+
+            if self.spectating.status.checksum:
+                # Set new map as current status
+                self.current_status = copy(self.spectating.status)
 
         elif action == ReplayAction.Skip:
             self.game.bancho.request_stats([self.spectating.id])
@@ -235,6 +241,10 @@ class ReplayManager:
                 f"{self.spectating} is currently spectating another player."
             )
             return
+
+        if not self.current_status.checksum and self.spectating.status.checksum:
+            # Current status has no valid beatmap
+            self.current_status = copy(self.spectating.status)
 
         self.replay.frames.extend(frames)
 
