@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import List
 
 import hashlib
+import os
 
 
 class Score:
@@ -93,3 +94,17 @@ class Score:
             f"{frame.time}|{min(1.0, frame.current_hp / 200)}" for frame in self.frames
         ]
         return ",".join(graph)
+
+    def save_to_file(self, replay_file: bytes) -> None:
+        import session
+
+        os.makedirs(f"{session.config['folder']}/{self.player.name}", exist_ok=True)
+
+        with open(
+            f"{session.config['folder']}/{self.player.name}/{self.filename}", "wb"
+        ) as osr:
+            osr.write(replay_file)
+
+        session.manager.logger.info(
+            f"Replay saved to '{session.config['folder']}/{self.player.name}/{self.filename}'"
+        )

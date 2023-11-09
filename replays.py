@@ -81,7 +81,7 @@ class Replay:
         frame = score.frames[-1]
 
         header = StreamOut()
-        header.u8(self.player.status.mode.value)
+        header.u8(score.status.mode.value)
         header.s32(round(self.game.version_number))
         header.string(score.status.checksum)
         header.string(score.player.name)
@@ -132,19 +132,18 @@ class Replay:
             self.reset()
             return
 
-        if self.score_frames[-1].total_hits <= 0:
-            self.logger.warning("Replay save failed: Total hits <= 0")
-            return
-
-        score = Score(self.score_frames, self.player, status, self.passed)
+        score = Score(
+            self.score_frames,
+            self.player,
+            status,
+            self.passed
+        )
 
         replay_file = self.get_replay(score)
 
-        import utils
-
         self.game.tasks.executor.submit(
-            utils.upload_score,
-            score, replay_file
+            score.save_to_file,
+            replay_file
         )
 
         self.reset()
@@ -189,7 +188,6 @@ class ReplayManager:
                 self.replay.create()
 
             self.replay.reset()
-
             self.replay.completed = False
 
             self.game.bancho.request_stats([self.spectating.id])
