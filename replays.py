@@ -1,5 +1,6 @@
 from typing import Optional, Tuple, List
 from datetime import datetime, timezone
+from objects import Score
 from copy import copy
 
 from osu.objects import ReplayFrame, ScoreFrame
@@ -8,9 +9,6 @@ from osu.bancho.streams import StreamOut
 from osu.objects import Player, Status
 from osu import Game
 
-from objects import Score
-
-import threading
 import logging
 import lzma
 
@@ -18,18 +16,17 @@ MIN_REPLAY_SIZE = 120
 
 
 class Replay:
-    def __init__(self, manager) -> None:
-        self.game: Game = manager.game
+    def __init__(self, manager: "ReplayManager") -> None:
+        self.game = manager.game
         self.manager = manager
 
         self.score_frames: List[ScoreFrame] = []
         self.frames: List[ReplayFrame] = []
         self.seed = 0
 
+        self.logger = logging.getLogger("replay-manager")
         self.completed = False
         self.passed = False
-
-        self.logger = logging.getLogger("replay-manager")
 
     @property
     def player(self) -> Optional[Player]:
@@ -77,7 +74,6 @@ class Replay:
 
     def get_replay(self, score: Score) -> bytes:
         replay = StreamOut()
-
         frame = score.frames[-1]
 
         header = StreamOut()
@@ -133,20 +129,10 @@ class Replay:
             self.reset()
             return
 
-        score = Score(
-            self.score_frames,
-            self.player,
-            status,
-            self.passed
-        )
-
+        score = Score(self.score_frames, self.player, status, self.passed)
         replay_file = self.get_replay(score)
 
-        self.game.tasks.executor.submit(
-            score.save_to_file,
-            replay_file
-        )
-
+        self.game.tasks.executor.submit(score.save_to_file, replay_file)
         self.reset()
 
         return score, replay_file
@@ -158,9 +144,9 @@ class Replay:
 
 
 class ReplayManager:
-    def __init__(self, game) -> None:
+    def __init__(self, game: Game) -> None:
         self.last_action = ReplayAction.SongSelect
-        self.game: Game = game
+        self.game = game
 
         self.current_status = Status()
         self.replay = Replay(self)
@@ -176,7 +162,7 @@ class ReplayManager:
         action: ReplayAction,
         extra: int,
         score_frame: Optional[ScoreFrame],
-    ):
+    ) -> None:
         if not self.spectating:
             self.logger.warning("No target was found for spectating!")
             return
