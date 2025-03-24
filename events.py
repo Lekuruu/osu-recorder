@@ -14,9 +14,7 @@ def user_presence(player: Player):
         return
 
     session.logger.info(f"Found player: {player.name}")
-
     session.game.bancho.start_spectating(player)
-
     session.logger.info(f"{player.name} is {player.status}")
 
     if player.status.action in (StatusAction.Playing, StatusAction.Multiplaying):
@@ -31,9 +29,10 @@ def logout(player: Player):
         exit(0)
 
 
-@session.game.events.register(ServerPackets.SPECTATE_FRAMES, threaded=True)
+@session.game.events.register(ServerPackets.SPECTATE_FRAMES)
 def frames(action, frames, score_frame, extra):
     session.manager.handle_frames(frames, action, extra, score_frame)
+    session.game.bancho.fast_read = True
 
 
 @session.game.events.register(ServerPackets.USER_ID, threaded=True)
